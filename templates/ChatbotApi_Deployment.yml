@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-chatbot-api-deployment
+spec:
+  replicas: {{ .Values.chatbotApi.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-chatbot-api
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-chatbot-api
+    spec:
+      containers:
+        - name: {{ .Release.Name }}-chatbot-api-container
+          image: {{ .Values.chatbotApi.image }}
+          ports:
+            - containerPort: 3089
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: chatbot-api-secrets
+                  key: DATABASE_URL
+            - name: CLIENT_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: chatbot-api-config
+                  key: CLIENT_URL
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: chatbot-api-secrets
+                  key: OPENAI_API_KEY
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: chatbot-api-secrets
+                  key: JWT_SECRET
+            - name: OPENAI_ASSISTANT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: chatbot-api-config
+                  key: OPENAI_ASSISTANT_ID
+            - name: CHATBOT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: chatbot-api-secrets
+                  key: CHATBOT_SECRET

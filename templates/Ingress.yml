@@ -1,0 +1,59 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-ingress
+  annotations:
+    {{- with .Values.ingress.cert_annotation }}
+    {{- if . }}
+    networking.gke.io/managed-certificates: {{ . | quote }}
+    {{- end }}
+    {{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.class }}
+  rules:
+    - host: chatbot.codehead.training
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-chatbot-api-service
+                port:
+                  number: 80
+    - host: acmestore.codehead.training
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-web-service
+                port:
+                  number: 80
+    - host: storeapi.codehead.training
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-store-api-service
+                port:
+                  number: 80
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-web-service
+                port:
+                  number: 80
+  {{- if not .Values.ingress.cert_annotation }}
+  tls: # only in local development using mkcert
+  - hosts:
+    - "acmestore.codehead.training"
+    - "storeapi.codehead.training"
+    secretName: mydomain-tls
+  {{- end }}

@@ -1,0 +1,4 @@
+*.pem
+values-dev.yml
+values-prod.yml
+.DS_Store

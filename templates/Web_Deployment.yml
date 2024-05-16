@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-web-deployment
+spec:
+  replicas: {{ .Values.webServer.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-web-server
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-web-server
+    spec:
+      containers:
+        - name: {{ .Release.Name }}-web-server-container
+          image: {{ .Values.webServer.image }}
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: {{ .Values.webServer.memoryLimit }}
+              cpu: {{ .Values.webServer.cpuLimit }}

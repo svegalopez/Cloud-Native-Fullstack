@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: chatbot-api-config
+data:
+    OPENAI_ASSISTANT_ID: {{ .Values.chatbotApi.config.openaiAssistantId }}
+    CLIENT_URL: {{ .Values.chatbotApi.config.clientUrl }}

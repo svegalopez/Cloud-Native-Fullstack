@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-chatbot-db-migrate-job
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+spec:
+  template:
+    spec:
+      containers:
+      - name: {{ .Release.Name }}-chatbot-db-migrate-job-container
+        image: {{ .Values.chatbotApi.image }}
+        command: ["npm", "run", "{{ .Values.chatbotApi.migrateCommand }}"]
+        env:
+          - name: DATABASE_URL
+            valueFrom:
+              secretKeyRef:
+                name: chatbot-api-secrets
+                key: DATABASE_URL
+      restartPolicy: Never

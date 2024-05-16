@@ -1,0 +1,51 @@
+# Config Variables
+appUrl: "https://acmestore.codehead.training:30906"
+googleClientId: "xxxxx"
+googleRedirectUri: "https://storeapi.codehead.training:30906/google-callback"
+storageCapacity: 1Gi
+
+# Secrets
+secrets:
+  pgPassword: "xxxxx"
+  jwtSecret: "xxxxx"
+  adminUserPassword: "xxxxx"
+  googleClientSecret: "xxxxx"
+  webhookSecret: "xxxxx"
+  stripeKey: "xxxxx"
+  databaseUrl: "xxxxx"
+
+storeApi:
+  image: "store-api:v3"
+  replicaCount: 1
+  memoryRequest: "256Mi"
+  cpuRequest: "250m"
+  memoryLimit: "256Mi"
+  cpuLimit: "500m"
+  migrateCommand: "migrate:dev"
+
+chatbotApi:
+  image: "chatbot-api:v11"
+  replicaCount: 1 #3 in production
+  migrateCommand: "migrate:dev"
+  secrets:
+    jwtSecret: "xxxxx"
+    openaiKey: "xxxxx"
+    chatbotSecret: "xxxxx"
+    databaseUrl: "xxxxx"
+  config:
+    openaiAssistantId: "xxxxx"
+    clientUrl: "https://acmestore.codehead.training:30906"
+
+webServer:
+  image: "acme-web-server:v4.1"
+  replicaCount: 1
+  memoryLimit: "512Mi"
+  cpuLimit: "500m"
+
+ingress:
+  cert_annotation: null
+  class: "nginx"
+
+minio:
+  accessKey: "xxxxx"
+  secretKey: "xxxxx"
