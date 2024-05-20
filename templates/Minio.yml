@@ -14,17 +14,20 @@ spec:
     spec:
       containers:
       - name: minio
-        image: minio/minio
-        args:
-        - server
-        - /data
+        image: quay.io/minio/minio:latest
+        command:
+        - /bin/bash
+        - -c
+        args: 
+        - minio server /data --console-address :9001
         env:
-        - name: MINIO_ACCESS_KEY
+        - name: MINIO_ROOT_USER
           value: {{ .Values.minio.accessKey }}
-        - name: MINIO_SECRET_KEY
+        - name: MINIO_ROOT_PASSWORD
           value: {{ .Values.minio.secretKey }}
         ports:
         - containerPort: 9000
+        - containerPort: 9001
         volumeMounts:
         - name: storage
           mountPath: "/data"
@@ -42,6 +45,27 @@ spec:
   type: ClusterIP
   ports:
   - port: 80
+    name: server
     targetPort: 9000
+  - port: 9001
+    name: console 
+    targetPort: 9001
+  selector:
+    app: minio
+
+--- 
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio-console
+  labels:
+    app: minio
+spec:
+  type: NodePort
+  ports:
+    - port: 9001
+      nodePort: 32001
+      targetPort: 9001
   selector:
     app: minio
